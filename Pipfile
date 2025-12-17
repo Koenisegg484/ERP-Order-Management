@@ -11,6 +11,8 @@ djangorestframework-simplejwt = "*"
 celery = "*"
 redis = "*"
 django-celery-beat = "*"
+django-filter = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 

@@ -1,10 +1,11 @@
 # from django.shortcuts import render
-from .models import Order, Product, Inventory
-from .serializers import OrderSerializer, ProductSerializer, InventorySerializer, OrderStatusSerializer
-from rest_framework import generics, viewsets
+from config.permissions import IsAdmin, IsStaff
+from products.models import Inventory
+from .models import Order
+from .serializers import OrderSerializer, OrderStatusSerializer
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .permissions import IsAdmin, IsStaff
 from django.db.models import Sum
 
 
@@ -16,16 +17,6 @@ class OrderCreateView(generics.CreateAPIView):
 class OrderListView(generics.ListAPIView):
     queryset = Order.objects.all().order_by("-created_at")
     serializer_class = OrderSerializer
-    permission_classes = [IsStaff]
-
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [IsAdmin]
-
-class InventoryViewSet(viewsets.ModelViewSet):
-    queryset = Inventory.objects.all()
-    serializer_class = InventorySerializer
     permission_classes = [IsStaff]
 
 class OrderStatusUpdateView(generics.UpdateAPIView):

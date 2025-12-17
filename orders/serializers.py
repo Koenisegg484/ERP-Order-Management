@@ -1,21 +1,11 @@
 from rest_framework import serializers
-
 from orders.tasks import order_created
-from .models import Product, Order, OrderItem, Inventory, OrderHistory
+from products.models import Product, Inventory
+from products.serializers import ProductSerializer
+from .models import Order, OrderItem, OrderHistory
 from django.db import transaction
 
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = "__all__"
-
-class InventorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Inventory
-        fields = "__all__"
-
 class OrderItemSerializer(serializers.ModelSerializer):
-
     product = ProductSerializer(read_only=True)
     product_id = serializers.PrimaryKeyRelatedField(
         queryset = Product.objects.all(),
@@ -48,9 +38,6 @@ class OrderSerializer(serializers.ModelSerializer):
                 inventory = Inventory.objects.select_for_update().get(product = product)
                 if inventory.quantity < quantity: 
                     raise serializers.ValidationError(f"Insufficient stock for {product.name}")
-
-                # inventory.quantity -= quantity
-                # inventory.save()
 
                 OrderItem.objects.create(order = order, product=product, quantity = quantity, price = price)
                 total += price * quantity

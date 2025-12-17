@@ -27,9 +27,12 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
+    'drf_spectacular',
 
     #Local apps
-    'orders'
+    'products',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +43,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'config.middleware.ExceptionLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -51,6 +56,15 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "config.pagination.StandardResultsSetPagination",
+
+    "PAGE_SIZE": 10,
+    "DEFAULT_SCHEMA_CLASS" : "drf_spectacular.openapi.AutoSchema"
 }
 
 TEMPLATES = [
@@ -129,3 +143,10 @@ CELERY_BROKER_URL = "redis://redis:6379/0"
 CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "ERP Order Management API",
+    "DESCRIPTION": "Order, inventory, and reporting system",
+    "VERSION": "1.0.0",
+}
