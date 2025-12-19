@@ -14,11 +14,9 @@ services:
       - db
       - redis
     environment:
-      - DJANGO_DB_NAME=erp_system
-      - DJANGO_DB_USER=erp_user
-      - DJANGO_DB_PASSWORD=erp_pass
-      - DJANGO_DB_HOST=db
-      - DJANGO_DB_PORT=5432
+      - DATABASE_URL=postgresql://erp_user:erp_pass@db:5432/erp_system
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
 
 
   db:
@@ -48,6 +46,11 @@ services:
       - web
       - redis
       - db
+    environment:
+      - DATABASE_URL=postgresql://erp_user:erp_pass@db:5432/erp_system
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
 
 
 

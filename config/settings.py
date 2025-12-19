@@ -1,18 +1,33 @@
 import os
-
+import dj_database_url
 from pathlib import Path
+from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-c52vi%ngavoe@2_l&yx%t7x2d13r&y(mv9qux6#xqa36kg792l'
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-c52vi%ngavoe@2_l&yx%t7x2d13r&y(mv9qux6#xqa36kg792l"
+)
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    "*"
+).split(",")
+
 
 
 # Application definition
@@ -88,17 +103,13 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DJANGO_DB_NAME", "erp_system"),
-        "USER": os.environ.get("DJANGO_DB_USER", "erp_user"),
-        "PASSWORD": os.environ.get("DJANGO_DB_PASSWORD", "MyDjangoProject"),
-        "HOST": os.environ.get("DJANGO_DB_HOST", "localhost"),
-        "PORT": os.environ.get("DJANGO_DB_PORT", "5432"),
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get(
+            "DATABASE_URL",
+            "postgres://erp_user:MyDjangoProject@localhost:5432/erp_system"
+        )
+    )
 }
 
 
@@ -136,14 +147,29 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
+REDIS_URL = os.environ.get(
+    "REDIS_URL",
+    "redis://redis:6379/0"
+)
 
-CELERY_BROKER_URL = "redis://redis:6379/0"
-CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+CELERY_BROKER_URL = os.environ.get(
+    "CELERY_BROKER_URL", "redis://redis:6379/0"
+)
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_RESULT_BACKEND", "redis://redis:6379/0"
+)
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=int(os.environ.get("ACCESS_TOKEN_MINUTES", 15))
+    ),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "ERP Order Management API",
