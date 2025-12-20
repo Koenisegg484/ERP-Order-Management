@@ -15,6 +15,7 @@ django-filter = "*"
 drf-spectacular = "*"
 dj-database-url = "*"
 python-dotenv = "*"
+gunicorn = "*"
 
 [dev-packages]
 
