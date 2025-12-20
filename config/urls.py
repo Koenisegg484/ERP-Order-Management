@@ -6,6 +6,8 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 
+from config.views import BootstrapUserView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -13,6 +15,8 @@ urlpatterns = [
     path('api/', include("products.urls")),
     path('api/token/', TokenObtainPairView.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view()),
+    path("bootstrap/create-admin/", BootstrapUserView.as_view()),
+
 ]
 urlpatterns += [
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
